@@ -20,3 +20,4 @@ Suporte técnico Infinita Geradores
 📲 Acesso
 
 Use diretamente pelo navegador
+https://manotecnico-cmd.github.io/simulador-para-dimensionar-carga-mobile/
