@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Mobile</title>
+
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f2f2f2;
+}
+
+.container {
+  max-width: 420px;
+  margin: auto;
+  padding: 15px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.card {
+  background: #fff;
+  padding: 30px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+label {
+  font-size: 12px;
+}
+
+input, select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 6px;
+}
+
+.add { background: #007bff; color:#fff; }
+.calc { background: #28a745; color:#fff; }
+.rem { background: #dc3545; color:#fff; }
+
+.resultado {
+  margin-top: 15px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<img src="logo.png" style="max-width:120px;">
+
+<h3>Infinita Geradores</h3>
+<h3>Assessoria - Manutenção - Locação - Vendas</h3>
+<h3>Dimensionador para determinação de potência</h3>
+
+<label>Cenário:</label>
+<select id="cenario">
+<option value="leve">Residencial / Leve</option>
+<option value="evento">Evento</option>
+<option value="comercial">Comercial</option>
+<option value="critico">Crítico – Hospital / Data Center / Centro Cirúrgico</option>
+</select>
+
+<div id="lista"></div>
+
+<button class="add" onclick="add()">Adicionar carga</button>
+<button class="calc" onclick="calcular()">Calcular</button>
+<div id="limiteMsg" style="
+  display:none;
+  color:#b30000;
+  background:#ffe6e6;
+  padding:10px;
+  border-radius:6px;
+  text-align:center;
+  margin-top:10px;
+  font-size:22px;
+">
+🔒 Limite da versão gratuita atingido<br>
+Desbloqueie a versão completa
+
+<button 
+  onclick="window.open('https://wa.me/5541996080406?text=Olá! Quero desbloquear a versão completa do dimensionador.', '_blank')"
+  style="background:#ff9800; color:#000; margin-top:5px;">
+  Desbloquear versão completa
+</button>
+</div>
+
+<div id="res" class="resultado"></div>
+
+</div>
+
+<script>
+
+function add(){
+const LIMITE = 5;
+   let total = document.querySelectorAll(".card").length;
+
+  let msg = document.getElementById("limiteMsg");
+
+  if(total >= LIMITE){
+    msg.style.display = "block";
+    return;
+  }
+
+  msg.style.display = "none";
+
+  let div = document.createElement("div");
+  div.className = "card";
+
+  div.innerHTML = `
+    <label>Equipamento</label>
+    <input class="nome" placeholder="Ex: Motor, iluminação, etc.">
+
+    <label>Potência</label>
+    <input type="number" class="pot" value="0">
+
+    <label>Unidade</label>
+    <select class="uni">
+      <option value="kw">kW</option>
+      <option value="cv">CV</option>
+      <option value="hp">HP</option>
+    </select>
+
+    <label>FP</label>
+    <input type="number" class="fp" value="0.8" step="0.01">
+
+    <button class="rem" onclick="removerMobile(this)">X</button>
+  `;
+
+  document.getElementById("lista").appendChild(div);
+}
+
+function calcular(){
+
+  let cards = document.querySelectorAll(".card");
+
+  let somaKw = 0;
+  let somaFP = 0;
+
+  cards.forEach(c => {
+
+    let valor = parseFloat(c.querySelector(".pot").value) || 0;
+    let unidade = c.querySelector(".uni").value;
+    let fp = parseFloat(c.querySelector(".fp").value) || 0.8;
+
+    let kw = 0;
+
+    if(unidade === "kw") kw = valor;
+    if(unidade === "cv") kw = valor * 0.7355;
+    if(unidade === "hp") kw = valor * 0.746;
+
+    somaKw += kw;
+    somaFP += kw * fp;
+  });
+
+  let fpMedio = somaKw ? somaFP / somaKw : 0.8;
+  let kva = somaKw / fpMedio;
+
+  document.getElementById("res").innerHTML =
+    "kW total: " + somaKw.toFixed(1) +
+    "<br>kVA estimado: " + kva.toFixed(1);
+}
+
+// inicia com 1 linha
+
+
+add();
+function removerMobile(botao){
+  botao.parentNode.remove();
+  calcular();
+}
+
+function removerMobile(botao){
+  botao.parentNode.remove();
+  calcular();
+
+  document.getElementById("limiteMsg").style.display = "none";
+}
+
+
+</script>
+
+</body>
+</html>
